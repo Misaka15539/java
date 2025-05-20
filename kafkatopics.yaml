@@ -1,0 +1,149 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.17.2
+  name: kafkatopics.kafka.gdcs.huaweicloud.com
+spec:
+  group: kafka.gdcs.huaweicloud.com
+  names:
+    kind: KafkaTopic
+    listKind: KafkaTopicList
+    plural: kafkatopics
+    singular: kafkatopic
+  scope: Namespaced
+  versions:
+    - additionalPrinterColumns:
+        - description: The name of the Kafka cluster this topic belongs to
+          jsonPath: .spec.kafkaAddress
+          name: KafkaAddress
+          type: string
+        - description: The state of the topic resource
+          jsonPath: .status.ready
+          name: Ready
+          type: boolean
+      name: v1
+      schema:
+        openAPIV3Schema:
+          description: KafkaTopic is the Schema for the kafkatopics API.
+          properties:
+            apiVersion:
+              description: |-
+                APIVersion defines the versioned schema of this representation of an object.
+                Servers should convert recognized schemas to the latest internal value, and
+                may reject unrecognized values.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: |-
+                Kind is a string value representing the REST resource this object represents.
+                Servers may infer this from the endpoint the client submits requests to.
+                Cannot be updated.
+                In CamelCase.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: KafkaTopicSpec defines the desired state of KafkaTopic.
+              properties:
+                kafkaAddress:
+                  type: string
+                topics:
+                  items:
+                    properties:
+                      config:
+                        additionalProperties:
+                          type: string
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                      partition:
+                        format: int32
+                        minimum: 1
+                        type: integer
+                      replica:
+                        format: int32
+                        maximum: 3
+                        minimum: 2
+                        type: integer
+                      topicName:
+                        type: string
+                    type: object
+                  type: array
+              type: object
+            status:
+              description: KafkaStatus defines the observed state of Kafka.
+              properties:
+                conditions:
+                  items:
+                    properties:
+                      lastTransitionTime:
+                        description: Last time the condition transitioned from one status
+                          to another.
+                        type: string
+                      lastUpdateTime:
+                        description: The last time this condition was updated.
+                        type: string
+                      message:
+                        description: Human-readable message indicating details about
+                          last transition.
+                        type: string
+                      reason:
+                        description: Unique, one-word, CamelCase reason for the condition's
+                          last transition.
+                        type: string
+                      status:
+                        description: Status of the condition, one of True, False, Unknown.
+                        type: string
+                      type:
+                        description: Type of Zookeeper cluster condition.
+                        type: string
+                    type: object
+                  type: array
+                kafkaAddress:
+                  type: string
+                kafkaNodes:
+                  items:
+                    properties:
+                      id:
+                        type: string
+                      ip:
+                        type: string
+                      ipv6:
+                        type: string
+                      name:
+                        type: string
+                      netMode:
+                        type: string
+                      nodeId:
+                        type: string
+                      nodeName:
+                        type: string
+                      startTime:
+                        type: string
+                      status:
+                        type: string
+                      version:
+                        type: string
+                    type: object
+                  type: array
+                message:
+                  type: string
+                observedGeneration:
+                  format: int64
+                  type: integer
+                phase:
+                  type: string
+                ready:
+                  type: boolean
+                zkAddress:
+                  type: string
+              type: object
+          required:
+            - spec
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: { }
